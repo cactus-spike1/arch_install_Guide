@@ -12,7 +12,9 @@ timedatectl set-ntp true
 ```
 
 ## 3. Разметка диска с помощью `cfdisk`
+```bash
 sudo cfdisk /dev/sdX
+```
 - **Раздел EFI**: 515M, тип `EFI System`
 - **Корневой раздел**: стандарт, всё пространство
 - **Swap**: 50% от объёма ОЗУ
