@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Настройки
-USERNAME="user"        # Имя пользователя
-PASSWORD="password"    # Пароль для пользователя
+USERNAME="cactus"        # Имя пользователя
+PASSWORD="cactus"    # Пароль для пользователя
 ROOT_PASSWORD="root"  # Пароль для root
 
 # Установка необходимых пакетов
