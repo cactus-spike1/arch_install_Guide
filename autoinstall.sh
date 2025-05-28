@@ -3,7 +3,7 @@
 # Настройки
 USERNAME="user"        # Имя пользователя
 PASSWORD="password"    # Пароль для пользователя
-ROOT_PASSWORD="rootpassword"  # Пароль для root
+ROOT_PASSWORD="root"  # Пароль для root
 
 # Установка необходимых пакетов
 pacman -Sy --noconfirm archlinux-keyring
