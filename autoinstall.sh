@@ -1,19 +1,24 @@
 #!/bin/bash
 
+# Настройки
+USERNAME="user"        # Имя пользователя
+PASSWORD="password"    # Пароль для пользователя
+ROOT_PASSWORD="rootpassword"  # Пароль для root
+
 # Установка необходимых пакетов
 pacman -Sy --noconfirm archlinux-keyring
-pacman -S --noconfirm base linux linux-firmware nano grub efibootmgr networkmanager
+pacman -S --noconfirm base linux linux-firmware nano grub efibootmgr networkmanager sudo
 
 # Настройка системного времени
 timedatectl set-ntp true
 
 # Разметка диска
 (
-echo o # Создать новую таблицу разделов
+echo g # Создать новую GPT таблицу
 echo n # Новый раздел
 echo 1 # Номер раздела
 echo   # Начало (по умолчанию)
-echo +515M # Размер EFI раздела
+echo +512M # Размер EFI раздела (512 МБ)
 echo t # Изменить тип раздела
 echo 1 # Номер раздела
 echo 1 # Тип EFI System
@@ -34,7 +39,7 @@ mkdir /mnt/boot
 mount /dev/sda1 /mnt/boot
 
 # Установка базовой системы
-pacstrap /mnt base linux linux-firmware nano grub efibootmgr networkmanager
+pacstrap /mnt base linux linux-firmware nano grub efibootmgr networkmanager sudo
 
 # Настройка fstab
 genfstab -U /mnt >> /mnt/etc/fstab
@@ -59,11 +64,14 @@ cat <<EOL >> /etc/hosts
 EOL
 
 # Установка пароля для root
-echo "root:password" | chpasswd
+echo "root:$ROOT_PASSWORD" | chpasswd
 
 # Создание пользователя
-useradd -m -G wheel -s /bin/bash user
-echo "user:password" | chpasswd
+useradd -m -G wheel -s /bin/bash $USERNAME
+echo "$USERNAME:$PASSWORD" | chpasswd
+
+# Настройка sudo
+echo "%wheel ALL=(ALL) ALL" >> /etc/sudoers
 
 # Установка загрузчика GRUB
 grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB
