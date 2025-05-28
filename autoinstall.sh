@@ -1,9 +1,11 @@
 #!/bin/bash
 
-# Настройки
-USERNAME="cactus"        # Имя пользователя
-PASSWORD="cactus"    # Пароль для пользователя
-ROOT_PASSWORD="root"  # Пароль для root
+# Настройки по умолчанию
+USERNAME="${USERNAME:-user}"        # Имя пользователя (по умолчанию "user")
+PASSWORD="${PASSWORD:-password}"    # Пароль для пользователя (по умолчанию "password")
+ROOT_PASSWORD="${ROOT_PASSWORD:-rootpassword}"  # Пароль для root (по умолчанию "rootpassword")
+EFI_SIZE="${EFI_SIZE:-512M}"        # Размер EFI раздела (по умолчанию 512M)
+DISK="/dev/sda"                     # Диск для установки (по умолчанию /dev/sda)
 
 # Установка необходимых пакетов
 pacman -Sy --noconfirm archlinux-keyring
@@ -18,7 +20,7 @@ echo g # Создать новую GPT таблицу
 echo n # Новый раздел
 echo 1 # Номер раздела
 echo   # Начало (по умолчанию)
-echo +512M # Размер EFI раздела (512 МБ)
+echo +$EFI_SIZE # Размер EFI раздела
 echo t # Изменить тип раздела
 echo 1 # Номер раздела
 echo 1 # Тип EFI System
@@ -27,16 +29,16 @@ echo 2 # Номер раздела
 echo   # Начало (по умолчанию)
 echo   # Конец (по умолчанию, использовать всё оставшееся пространство)
 echo w # Записать изменения
-) | fdisk /dev/sda
+) | fdisk $DISK
 
 # Форматирование разделов
-mkfs.fat -F32 /dev/sda1
-mkfs.ext4 /dev/sda2
+mkfs.fat -F32 ${DISK}1
+mkfs.ext4 ${DISK}2
 
 # Монтирование разделов
-mount /dev/sda2 /mnt
+mount ${DISK}2 /mnt
 mkdir /mnt/boot
-mount /dev/sda1 /mnt/boot
+mount ${DISK}1 /mnt/boot
 
 # Установка базовой системы
 pacstrap /mnt base linux linux-firmware nano grub efibootmgr networkmanager sudo
