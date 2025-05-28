@@ -8,12 +8,21 @@ pacman -S --noconfirm base linux linux-firmware nano grub efibootmgr networkmana
 timedatectl set-ntp true
 
 # Разметка диска
-cfdisk /dev/sda <<EOF
-type=EFI System
-size=515M
-type=Linux filesystem
-size=0
-EOF
+(
+echo o # Создать новую таблицу разделов
+echo n # Новый раздел
+echo 1 # Номер раздела
+echo   # Начало (по умолчанию)
+echo +515M # Размер EFI раздела
+echo t # Изменить тип раздела
+echo 1 # Номер раздела
+echo 1 # Тип EFI System
+echo n # Новый раздел
+echo 2 # Номер раздела
+echo   # Начало (по умолчанию)
+echo   # Конец (по умолчанию, использовать всё оставшееся пространство)
+echo w # Записать изменения
+) | fdisk /dev/sda
 
 # Форматирование разделов
 mkfs.fat -F32 /dev/sda1
